@@ -17,6 +17,7 @@ import one.nio.http.Request;
 import one.nio.http.RequestMethod;
 import one.nio.http.Response;
 import one.nio.server.AcceptorConfig;
+import one.nio.util.Utf8;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -44,7 +45,7 @@ public final class ServiceImpl implements Service {
     }
 
     private static MemorySegment fromString(String data) {
-        return data == null ? null : MemorySegment.ofArray(data.toCharArray());
+        return data == null ? null : MemorySegment.ofArray(Utf8.toBytes(data));
     }
 
     private static MemorySegment fromBytes(byte[] data) {
