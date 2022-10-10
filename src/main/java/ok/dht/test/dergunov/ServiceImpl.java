@@ -8,18 +8,14 @@ import ok.dht.test.dergunov.database.BaseEntry;
 import ok.dht.test.dergunov.database.Config;
 import ok.dht.test.dergunov.database.Entry;
 import ok.dht.test.dergunov.database.MemorySegmentDao;
-import one.nio.http.HttpServer;
-import one.nio.http.HttpServerConfig;
-import one.nio.http.HttpSession;
-import one.nio.http.Param;
-import one.nio.http.Path;
-import one.nio.http.Request;
-import one.nio.http.RequestMethod;
-import one.nio.http.Response;
+import one.nio.http.*;
 import one.nio.server.AcceptorConfig;
 import one.nio.util.Utf8;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public final class ServiceImpl implements Service {
@@ -30,6 +26,8 @@ public final class ServiceImpl implements Service {
     private MemorySegmentDao database;
 
     private final long flushThresholdBytes;
+
+    private static final Set<Integer> ALLOWED_METHODS = new HashSet<>(List.of(Request.METHOD_GET, Request.METHOD_PUT, Request.METHOD_DELETE));
 
     ServiceImpl(ServiceConfig config, long flushThresholdBytes) {
         this.config = config;
@@ -58,7 +56,12 @@ public final class ServiceImpl implements Service {
         server = new HttpServer(createConfigFromPort(config.selfPort())) {
             @Override
             public void handleDefault(Request request, HttpSession session) throws IOException {
-                Response response = new Response(Response.BAD_REQUEST, Response.EMPTY);
+                Response response;
+                if (!ALLOWED_METHODS.contains(request.getMethod())) {
+                    response = new Response(Response.METHOD_NOT_ALLOWED, Response.EMPTY);
+                } else {
+                    response = new Response(Response.BAD_REQUEST, Response.EMPTY);
+                }
                 session.sendResponse(response);
             }
         };
