@@ -68,6 +68,7 @@ public final class ServiceImpl implements Service {
                 if (!ALLOWED_METHODS.contains(request.getMethod())) {
                     response = new Response(Response.METHOD_NOT_ALLOWED, Response.EMPTY);
                     session.sendResponse(response);
+                    return;
                 }
                 response = new Response(Response.BAD_REQUEST, Response.EMPTY);
                 session.sendResponse(response);
