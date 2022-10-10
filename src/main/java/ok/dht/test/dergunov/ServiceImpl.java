@@ -35,7 +35,7 @@ public final class ServiceImpl implements Service {
     private final long flushThresholdBytes;
 
     private static final Set<Integer> ALLOWED_METHODS =
-            new HashSet<>(List.of(Request.METHOD_GET, Request.METHOD_PUT, Request.METHOD_DELETE));
+            Set.of(Request.METHOD_GET, Request.METHOD_PUT, Request.METHOD_DELETE);
 
     ServiceImpl(ServiceConfig config, long flushThresholdBytes) {
         this.config = config;
